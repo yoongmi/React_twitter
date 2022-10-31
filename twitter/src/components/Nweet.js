@@ -22,6 +22,7 @@ const Nweet = ({ nweetObj, isOwner }) => {
     await updateDoc(NweetTextRef, {
       text: newNweet,
     });
+    setEditing(false);
   };
   const onChange = (e) => {
     const { value } = e.target;
@@ -30,10 +31,18 @@ const Nweet = ({ nweetObj, isOwner }) => {
   return (
     <div>
       {editing ? (
-        <form>
-          <input value={newNweet} require />
-          <input type="" />
-        </form>
+        <>
+          <form onSubmit={onSubmit}>
+            <input
+              type="text"
+              placeholder="Edit your nweet"
+              value={newNweet}
+              onChange={onChange}
+            />
+            <input type="submit" value="update Nweet" />
+          </form>
+          <button onClick={toggleEditing}>Cancel</button>
+        </>
       ) : (
         <>
           <h4>{nweetObj.text}</h4>

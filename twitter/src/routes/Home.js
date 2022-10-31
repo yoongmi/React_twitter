@@ -1,3 +1,4 @@
+import Nweet from "components/Nweet";
 import {
   addDoc,
   collection,
@@ -67,7 +68,11 @@ const Home = ({ userObj }) => {
       </form>
       <div>
         {totalNweet.map((nweet) => (
-          <h4 key={nweet.id}>{nweet.text}</h4>
+          <Nweet
+            key={nweet.id}
+            nweetObj={nweet}
+            isOwner={nweet.creatorId === userObj.uid}
+          />
         ))}
       </div>
     </div>

@@ -26,6 +26,7 @@ const Home = ({ userObj }) => {
       orderBy("createAt", "desc")
     );
     onSnapshot(q, (snapshot) => {
+      // db에 무슨 일이 있을때, 알림을 받음.
       const NweetArr = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),

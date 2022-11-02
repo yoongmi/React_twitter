@@ -6,19 +6,15 @@ import {
   query,
   onSnapshot,
 } from "firebase/firestore";
-import { dbService } from "myBase";
+import { dbService, storageService } from "myBase";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { ref, uploadString, getDownloadURL } from "@firebase/storage";
 
 const Home = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [totalNweet, setTotalNweet] = useState([]);
-  //   const getNweets = async () => {
-  //     const dbNweet = await getDocs(collection(dbService, "nweets"));
-  //     dbNweet.forEach((doc) => {
-  //       const nweetObj = { ...doc.data(), id: doc.id };
-  //       setTotalNweet((prev) => [nweetObj, ...prev]); // 최근데이터>순서로
-  //     });
-  //   };
+  const [attachment, setAttachment] = useState();
 
   useEffect(() => {
     const q = query(
@@ -44,16 +40,43 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    let FileUrl = "";
+    if (attachment !== "") {
+      const fileRef = ref(storageService, `${userObj.uid}/${uuidv4()}`);
+      const response = await uploadString(fileRef, attachment, "data_url");
+      FileUrl = await getDownloadURL(response.ref);
+    }
+    const newNweetObj = {
+      text: nweet,
+      createAt: Date.now(),
+      creatorId: userObj.uid,
+      attachmentUrl: FileUrl,
+    };
     try {
-      await addDoc(collection(dbService, "nweets"), {
-        text: nweet,
-        createAt: Date.now(),
-        creatorId: userObj.uid,
-      });
+      await addDoc(collection(dbService, "nweets"), newNweetObj);
     } catch (e) {
       console.log(e);
     }
     setNweet("");
+    setAttachment("");
+  };
+
+  const onFileChange = (e) => {
+    const {
+      target: { files },
+    } = e;
+    const theFile = files[0];
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => {
+      const {
+        currentTarget: { result },
+      } = finishedEvent;
+      setAttachment(result);
+    };
+    reader.readAsDataURL(theFile);
+  };
+  const onClearPhotoClick = () => {
+    setAttachment(null);
   };
   return (
     <div>
@@ -65,7 +88,14 @@ const Home = ({ userObj }) => {
           placeholder="What's on your mind?"
           maxLength={120}
         />
+        <input type="file" accept="image/*" onChange={onFileChange} />
         <input type="submit" value="Tweet" />
+        {attachment && (
+          <div>
+            <img src={attachment} width="200px" alt="preview img" />
+            <button onClick={onClearPhotoClick}>Clear</button>
+          </div>
+        )}
       </form>
       <div>
         {totalNweet.map((nweet) => (

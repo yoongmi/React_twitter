@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AppRouter from "./Router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { authService } from "myBase";
 
 function App() {
   const [init, setInit] = useState(false);
@@ -10,16 +11,32 @@ function App() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUserObj(user);
+        setUserObj({
+          displayName: user.displayName,
+          uid: user.uid,
+          updateProfile: (args) => user.updateProfile(args),
+        });
       }
       setInit(true);
     });
   }, []);
+  const refreshUser = () => {
+    const user = authService.currentUser;
+    setUserObj({
+      displayName: user.displayName,
+      uid: user.uid,
+      updateProfile: (args) => user.updateProfile(args),
+    });
+  };
 
   return (
     <>
       {init ? (
-        <AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj}></AppRouter>
+        <AppRouter
+          refreshUser={refreshUser}
+          isLoggedIn={Boolean(userObj)}
+          userObj={userObj}
+        ></AppRouter>
       ) : (
         "Loading...."
       )}

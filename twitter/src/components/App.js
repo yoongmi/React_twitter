@@ -38,7 +38,7 @@ function App() {
           refreshUser={refreshUser}
           isLoggedIn={Boolean(userObj)}
           userObj={userObj}
-        ></AppRouter>
+        />
       ) : (
         "Loading...."
       )}

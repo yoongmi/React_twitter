@@ -5,10 +5,11 @@ import {
   getAuth,
 } from "firebase/auth";
 
-const AuthForm = ({ newAccount }) => {
+const AuthForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [newAccount, setNewAccount] = useState(true);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -48,27 +49,39 @@ const AuthForm = ({ newAccount }) => {
       }
     }
   };
+  const toggleAccount = () => setNewAccount((prev) => !prev);
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        required
-        value={email}
-        onChange={onChange}
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        required
-        value={password}
-        onChange={onChange}
-      />
-      <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
-      {error}
-    </form>
+    <>
+      <form onSubmit={onSubmit} className="container">
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          required
+          value={email}
+          onChange={onChange}
+          className="authInput"
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          required
+          value={password}
+          onChange={onChange}
+          className="authInput"
+        />
+        <input
+          type="submit"
+          value={newAccount ? "Create Account" : "Log In"}
+          className="authInput authSubmit"
+        />
+        {error && <span className="authError">{error}</span>}
+      </form>
+      <span onClick={toggleAccount} className="authSwitch">
+        {newAccount ? "Log In" : "Create Account"}
+      </span>
+    </>
   );
 };
 

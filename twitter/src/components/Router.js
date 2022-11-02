@@ -7,19 +7,19 @@ import Navigation from "./Navigation";
 
 const AppRouter = ({ isLoggedIn, userObj, refreshUser }) => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       {isLoggedIn && <Navigation userObj={userObj} />}
-      <div
-        style={{
-          maxWidth: 890,
-          width: "100%",
-          margin: "0 auto",
-          marginTop: 80,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        {isLoggedIn ? (
+      {isLoggedIn ? (
+        <div
+          style={{
+            maxWidth: 890,
+            width: "100%",
+            margin: "0 auto",
+            marginTop: 80,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Routes>
             <Route>
               <Route path="/" element={<Home userObj={userObj} />} />
@@ -31,12 +31,12 @@ const AppRouter = ({ isLoggedIn, userObj, refreshUser }) => {
               />
             </Route>
           </Routes>
-        ) : (
-          <Routes>
-            <Route path="/" element={<Auth />} />
-          </Routes>
-        )}
-      </div>
+        </div>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Auth />} />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 };

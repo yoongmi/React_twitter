@@ -14,12 +14,12 @@ import { ref, uploadString, getDownloadURL } from "@firebase/storage";
 const Home = ({ userObj }) => {
   const [nweet, setNweet] = useState("");
   const [totalNweet, setTotalNweet] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
 
   useEffect(() => {
     const q = query(
       collection(dbService, "nweets"),
-      orderBy("createAt", "desc")
+      orderBy("createdAt", "desc")
     );
     onSnapshot(q, (snapshot) => {
       // db에 무슨 일이 있을때, 알림을 받음.
@@ -48,7 +48,7 @@ const Home = ({ userObj }) => {
     }
     const newNweetObj = {
       text: nweet,
-      createAt: Date.now(),
+      createdAt: Date.now(),
       creatorId: userObj.uid,
       attachmentUrl: FileUrl,
     };
@@ -76,7 +76,7 @@ const Home = ({ userObj }) => {
     reader.readAsDataURL(theFile);
   };
   const onClearPhotoClick = () => {
-    setAttachment(null);
+    setAttachment("");
   };
   return (
     <div>
